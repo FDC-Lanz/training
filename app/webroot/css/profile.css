@@ -1,0 +1,18 @@
+.profile-img{
+	display: inline-block;
+	width: 200px;
+	vertical-align: top;
+	border: solid 1px #454545;
+}
+
+.profile-info{
+	display: inline-block;
+	width: calc(100% - 205px);
+	background-color: 
+	vertical-align: top;
+	padding: 10px;
+}
+.profile-hubby{
+	margin-top: 20px;
+	margin-bottom: 40px;
+}
