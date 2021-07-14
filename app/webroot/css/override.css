@@ -1,0 +1,66 @@
+.profile-img{
+	display: inline-block;
+	width: 200px;
+	vertical-align: top;
+	border: solid 1px #454545;
+}
+
+.profile-info{
+	display: inline-block;
+	width: calc(100% - 205px);
+	background-color: 
+	vertical-align: top;
+	padding: 10px;
+}
+.profile-hubby{
+	margin-top: 20px;
+	margin-bottom: 40px;
+}
+.gender{
+	display: inline-block;
+	margin-left: 50px;
+}
+#UserGender1, #UserGender2{
+	margin-left: 0 !important;
+}
+
+.message-item-wrapper{
+	margin: 20px 0;
+	border: solid 1px #454545;
+	height: 100px;
+}
+.message-item-sender .message-item-img{
+	display: inline-block;
+	width: 100px;
+	height: 98px;
+	background-size: 100px 98px;
+	background-position: center
+}
+.message-item-receiver .message-item-img{
+	display: inline-block;
+	width: 100px;
+	height: 98px;
+	background-size: 100px 98px;
+	background-position: center
+}
+.message-item-sender .message-item-content{
+	border-right: solid 1px #454545;
+}
+.message-item-receiver .message-item-content{
+	border-left: solid 1px #454545;
+}
+.message-item-content{
+	display: inline-block;
+	vertical-align: top;
+	height: 100px;
+	width: calc(100% - 104px);
+	padding: 0;
+}
+.message-item-content-top{
+	height: calc(100% - 30px);
+	border-bottom: solid 1px #454545;
+	padding: 5px;
+}
+.message-item-content-bottom{
+	padding: 5px;
+}

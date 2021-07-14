@@ -3,7 +3,7 @@
 
     <?php 
         echo $this->Html->link('Back to homepage', 
-            array('controller' => 'users', 'action' => 'thankYou'),
+            array('controller' => 'messages', 'action' => 'messageList'),
             array('class' => 'btn btn-info btn-lg')
         ); 
     ?>

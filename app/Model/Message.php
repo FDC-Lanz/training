@@ -1,11 +1,11 @@
 <?php
+
 App::uses('AppModel', 'Model');
-/**
- * Message Model
- *
- * @property To $To
- * @property From $From
- */
+
 class Message extends AppModel {
-	
+    public $validate = array(
+        'to_id' => array(
+            'rule' => 'notBlank'
+        ),
+    );
 }

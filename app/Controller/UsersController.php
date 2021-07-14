@@ -2,11 +2,13 @@
 
 App::uses('AppController', 'Controller');
 
-class UsersController extends AppController {
+class UsersController extends AppController 
+{
 
 	public $components = array('Paginator');
 
-	public function beforeFilter() {
+	public function beforeFilter() 
+    {
 		$this->Auth->allow('register');
 	}
 
@@ -68,6 +70,69 @@ class UsersController extends AppController {
 
 	public function editProfile()
 	{
+        if ($this->request->is('post')) {
+            $data = array();
+            $ip = $this->request->clientIp();
+            $file = $this->request->data['User']['user_image'];
 
+            if (!empty($this->request->data['User']['name'])) {
+                $name = $this->request->data['User']['name'];
+                $data['name'] = "'$name'";
+            }
+            if (!empty($this->request->data['User']['birthdate'])) {
+                $birthdate = $this->request->data['User']['birthdate'];
+                $data['birthdate'] = "'$birthdate'";
+            }
+            if (!empty($this->request->data['User']['gender'])) {
+                $gender = $this->request->data['User']['gender'];
+                $data['gender'] = "'$gender'";
+            }
+            if (!empty($this->request->data['User']['hubby'])) {
+                $hubby = $this->request->data['User']['hubby'];
+                $data['hubby'] = "'$hubby'";
+            }
+            $data['modified_ip'] = "'$ip'";
+
+            if (empty($this->request->data['User']['user_image']['tmp_name'])) {
+                unset($this->User->validate['user_image']);
+            }
+
+            if ($this->User->validates()) {
+                if (!empty($file) && is_uploaded_file($file['tmp_name'])) {
+                    
+                    $ext = substr(strtolower(strrchr($file['name'], '.')), 1);
+                    $filename = time().'.'.$ext;
+                    move_uploaded_file(
+                        $file['tmp_name'],
+                        WWW_ROOT . DS . 'img/profiles/' . $filename
+                    );
+                    $data['image'] = "'$filename'";
+                }
+            }
+
+            $this->User->updateAll($data, array('id' => $this->Auth->user('id')));
+            $this->Session->write('Auth', $this->User->read(null, $this->Auth->user('id')));
+            $this->redirect(array('action' => 'profile'));
+        }
 	}
+
+    public function getUsers() 
+    {
+        $key = $this->request->query['key'];
+        $users = $this->User->find('all', array(
+            'conditions' => array(
+                'User.name LIKE' => '%'.$key.'%'
+            )
+        ));
+
+        $data = array();
+        foreach ($users as $index => $user) {
+            $data[$index]['id'] = (int) $user['User']['id'];
+            $data[$index]['text'] = $user['User']['name'];
+            $data[$index]['image'] = ($user['User']['image']) ? $user['User']['image'] : "default.png";
+        }
+        
+        echo json_encode($data);
+        exit;
+    }
 }
