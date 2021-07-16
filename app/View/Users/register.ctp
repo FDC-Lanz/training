@@ -1,7 +1,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-offset-3 col-md-6">
-			<h1 class="text-center">Register Form</h1>
+			<h1 class="text-center">Register</h1>
 
 			<?php 
 				echo $this->Form->create('User');

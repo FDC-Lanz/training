@@ -8,4 +8,11 @@ class Message extends AppModel {
 			'rule' => 'notBlank'
 		),
 	);
+
+	public $belongsTo = array(
+		'User'        => array(
+			'className'  => 'User',
+			'foreignKey' => 'to_id'
+		)
+	);
 }

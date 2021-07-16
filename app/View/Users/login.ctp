@@ -3,7 +3,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-offset-4 col-md-4 ">
-			<h1 class="text-center">Login Form</h1>
+			<h1 class="text-center">Login</h1>
 
 			<?php 
 				echo $this->Form->create('User');

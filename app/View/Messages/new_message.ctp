@@ -1,10 +1,12 @@
 <div class="container">
 	<h1 class="text-center">New Message</h1>
 
-	<?php echo $this->Form->create('Message'); ?>
-	<?php echo $this->Form->input('to_id', array('class' => 'form-control get-users')) ?>
-	<?php echo $this->Form->input('content', array('type' => 'textarea', 'class' => 'form-control')) ?>
-	<?php echo $this->Form->button('Send Message', array('class' => 'btn btn-primary')); ?>
+	<?php 
+        echo $this->Form->create('Message');
+	    echo $this->Form->input('to_id', array('class' => 'form-control get-users'));
+	    echo $this->Form->input('content', array('label' => false, 'placeholder' => 'Write your message', 'type' => 'textarea', 'class' => 'form-control'));
+	    echo $this->Form->button('Send Message', array('class' => 'btn btn-primary')); 
+    ?>
 </div>
 
 <script>

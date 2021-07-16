@@ -64,3 +64,22 @@
 .message-item-content-bottom{
 	padding: 5px;
 }
+.more-message-list, .more-message-details{
+	color: #337ab7;
+	font-weight: 700;
+	cursor: pointer;
+}
+.loadmore:hover{
+	color: #23527c;
+	text-decoration: underline;
+}
+.delete-message{
+	cursor: pointer;
+	margin-right: 10px;
+}
+.view-message{
+	margin-right: 10px;
+}
+.reply-wrapper{
+	margin-bottom: 70px;
+}

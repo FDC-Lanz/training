@@ -6,7 +6,7 @@ class MessagesController extends AppController {
 
 	public function messageList()
 	{
-        $this->loadMore();
+        $this->moreMessageList();
         $messages = $this->paginate('Message');
         $this->set(compact('messages'));
 	}
@@ -21,46 +21,123 @@ class MessagesController extends AppController {
         }
 	}
 
-    public function loadMore($count = 0) {
-        $authId = $this->Auth->user('id');
+    public function moreMessageList($count = 0) {
+        $userID = $this->Auth->user('id');
+
         $this->paginate = array('Message' => array(
-            'fields' => array(
-                'Message.*',
-                'Sender.id',
-                'Sender.name',
-                'Sender.image',
-                'Receiver.id',
-                'Receiver.name',
-                'Receiver.image',
-            ),
             'conditions' => array(
-                "Message.id IN(SELECT max(id) FROM messages WHERE(messages.from_id = {$authId} OR messages.to_id = {$authId}) GROUP BY IF(from_id = {$authId}, to_id, from_id), IF(from_id != {$authId}, to_id, from_id))"
-            ),
-            'joins' => array(
-                array(
-                    'alias' => 'Sender',
-                    'table' => 'users',
-                    'type' => 'LEFT',
-                    'conditions' => array('Message.from_id = Sender.id')
-                ),
-                array(
-                    'alias' => 'Receiver',
-                    'table' => 'users',
-                    'type' => 'LEFT',
-                    'conditions' => array('Message.to_id = Receiver.id')
-                )
+                "Message.id IN
+                (SELECT max(id)
+                    FROM messages
+                    WHERE
+                        (Message.from_id = {$userID}) ||
+                        (Message.to_id = {$userID})
+                    GROUP BY 
+                        IF (from_id = {$userID}, to_id, from_id),
+                        IF (from_id != {$userID}, to_id, from_id))"
             ),
             'order' => 'created DESC',
             'limit' => $this->limit,
             'offset' => $count,
         ));
 
-        // if load more
         if ($this->request->is('ajax')) {
             $messages = $this->paginate('Message');
-           
             $this->layout = false;
             $this->set(compact('messages'));
         }
+    }
+
+    public function bulkDeleteMessage()
+    {
+        $me = $this->Auth->user('id');
+        $other = $this->request->data['id'];
+        $this->Message->deleteAll(
+            array(
+                "Message.id IN
+                (SELECT id FROM messages
+                WHERE
+                    (Message.from_id = {$me} && Message.to_id = {$other}) ||
+                    (Message.from_id = {$other} && Message.to_id = {$me}))"
+            )
+        );
+        exit;
+    }
+
+    public function messageDetails($other, $count = 0) 
+    {
+        $me = $this->Auth->user('id');
+
+        $this->loadModel('User');
+        $this->User->id = $other;
+        $user = $this->User->read('id');
+
+        $this->moreMessageDetails($other, $count);
+      
+        $messages = $this->paginate('Message');
+        $this->set(compact('user', 'messages'));
+    }
+
+    public function moreMessageDetails($other, $count = 0) 
+    {
+        $me = $this->Auth->user('id');
+
+        if ($count == 1) {
+            $limit = 1;
+            $count = 0;
+        }
+
+        $this->paginate = array('Message' => array(
+            'conditions' => array(
+                "Message.id IN
+                (SELECT id FROM messages
+                WHERE
+                    (Message.from_id = {$me} && Message.to_id = {$other}) ||
+                    (Message.from_id = {$other} && Message.to_id = {$me}))"
+            ),
+            'order' => 'created DESC',
+            'limit' => $this->limit,
+            'offset' => $count,
+        ));  
+
+        if ($this->request->is(['ajax'])) {
+            $messages = $this->paginate('Message');
+            $this->layout = false;
+            $this->set(compact('messages'));
+        }
+    }
+
+    public function replyMessage() 
+    {
+        $me = $this->Auth->user('id');
+        if ($this->request->is('post')) {
+            $other = $this->request->data['Message']['to_id'];
+            $this->request->data['Message']['from_id'] = $me;
+
+            if ($this->Message->save($this->request->data)) {
+                $this->paginate = array('Message' => array(
+                    'conditions' => array(
+                        "Message.id IN
+                        (SELECT id FROM messages
+                        WHERE
+                            (Message.from_id = {$me} && Message.to_id = {$other}) ||
+                            (Message.from_id = {$other} && Message.to_id = {$me}))"
+                    ),
+                    'order' => 'created DESC',
+                    'limit' => 1,
+                    'offset' => 0,
+                ));  
+                
+                $messages = $this->paginate('Message');
+                $this->layout = false;
+                $this->set(compact('messages'));
+            }
+        }
+    }
+
+    public function singleDeleteMessage()
+    {
+        $this->Message->delete($this->request->data['id']);
+        exit;
     }
 }
